@@ -1,0 +1,17 @@
+{
+  "name": "Upload Server Simulation",
+  "short_name": "UploadSim",
+  "description": "An interactive simulation of a concurrent file upload server with a real-time priority scoring model.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#181b1f",
+  "theme_color": "#181b1f",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

@@ -1,0 +1,253 @@
+﻿@page "/"
+@inject Simulation Simulation
+@inject UploadServer UploadServer
+
+<PageTitle>Upload Server Simulation</PageTitle>
+
+<style>
+    body {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 2rem 2rem;
+    }
+</style>
+
+
+
+        <header class="text-center mb-16">
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4 bg-gradient-to-br from-blue-500 to-green-500 bg-clip-text text-transparent">
+                Upload Server Simulation
+            </h1>
+            <div class="inline-flex items-center gap-2.5 rounded-full bg-zinc-800/50 border border-zinc-700 px-4 py-1.5">
+                @if (isSimulationRunning)
+                {
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <span class="text-sm font-medium text-green-400">Simulation Active</span>
+                }
+                else
+                {
+                    <span class="relative flex h-3 w-3">
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-zinc-500"></span>
+                    </span>
+                    <span class="text-sm font-medium text-zinc-400">Simulation Stopped</span>
+                }
+            </div>
+        </header>
+
+        <section class="mb-14">
+            <h2 class="text-2xl font-bold pb-4 mb-8 border-b border-zinc-700">Upload Queues</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-7">
+                @{
+                    int diskNumber = 1;
+                    foreach (UploadQueue queue in uploadQueues)
+                    {
+                        double progress = Math.Round(queue.Progress * 100, 2);
+                        bool isIdle = progress <= 0;
+                        bool isCompleted = progress >= 100;
+                        string currentSize = (queue.FileSize * queue.Progress).ToString("F0");
+
+                        <div class="bg-zinc-800 rounded-xl p-6 shadow-lg border transition-all duration-200 hover:!opacity-100 hover:!border-blue-500 hover:-translate-y-1.5 @(isIdle ? "border-zinc-700 border-dashed opacity-60" : "border-zinc-700")">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="w-11 h-11 bg-zinc-700 rounded-lg flex items-center justify-center text-2xl text-blue-500">💾</div>
+                                <h3 class="text-lg font-semibold">Disk @diskNumber</h3>
+                            </div>
+                            <div class="mb-5">
+                                <div class="relative bg-zinc-700 h-7 rounded-lg overflow-hidden shadow-inner @(isIdle ? "animate-pulse-idle" : "")">
+                                    <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
+                                        @if(isIdle)
+                                        {
+                                            <span>@progress.ToString("F2")%</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@currentSize MB / @queue.FileSize MB</span>
+                                        }
+                                    </span>
+                                    <div class="bg-gradient-to-r from-blue-500 to-green-500 h-full rounded-lg transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] @(isCompleted ? "animate-flash-success" : "")" style="width: @progress%"></div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-3 text-sm">
+                                @if (isIdle)
+                                {
+                                    <div class="flex justify-between items-center text-zinc-400">
+                                        <span>Status:</span>
+                                        <span class="font-semibold font-mono bg-zinc-700 px-2 py-0.5 rounded-md">Idle</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="flex justify-between items-center text-zinc-400">
+                                        <span>Client ID:</span>
+                                        <span class="font-semibold text-zinc-100 font-mono bg-zinc-700 px-2 py-0.5 rounded-md">#@queue.ClientId</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        diskNumber++;
+                    }
+                }
+            </div>
+        </section>
+
+        <section class="mb-14 bg-zinc-800 rounded-xl shadow-lg border border-zinc-700 overflow-hidden">
+            <button @onclick="ToggleFormula" class="w-full p-4 flex justify-between items-center transition-colors hover:bg-zinc-700/50">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-zinc-700 rounded-lg flex items-center justify-center text-xl text-green-400 flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-semibold">Priority Scoring Model</h3>
+                </div>
+                <svg class="w-6 h-6 text-zinc-400 flex-shrink-0 transition-transform duration-300 @(isFormulaExpanded ? "rotate-90" : "")" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+
+            <div class="transition-all duration-300 ease-in-out grid @(isFormulaExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")">
+                <div class="overflow-hidden">
+                    <div class="p-6 pt-4 border-t border-zinc-700">
+                        <p class="text-sm text-zinc-400 mb-4">
+                            The server prioritizes clients using a weighted formula. Clients with a higher score are processed first. The formula exponentially increases priority with wait time.
+                        </p>
+                        <code class="block bg-zinc-900/70 p-4 rounded-lg text-sm font-mono border border-zinc-600">
+                            <span class="text-green-400">PriorityScore</span> =
+                            (<span class="text-blue-400">WaitTime</span><sup>2</sup>) +
+                            (<span class="text-purple-400">ClientsWaiting</span> / <span class="text-blue-400">FileSize</span>)
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-14">
+            <h2 class="text-2xl font-bold pb-4 mb-8 border-b border-zinc-700">Client Queue</h2>
+            <div class="bg-zinc-800 rounded-xl shadow-lg border border-zinc-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="sticky top-0 bg-zinc-800/75 backdrop-blur-sm">
+                            <tr>
+                                <th class="p-4 text-left font-semibold text-zinc-400 uppercase tracking-wider">ID</th>
+                                <th class="p-4 text-left font-semibold text-zinc-400 uppercase tracking-wider">File Sizes (MB)</th>
+                                <th class="p-4 text-left font-semibold text-zinc-400 uppercase tracking-wider">Wait Time (s)</th>
+                                <th class="p-4 text-left font-semibold text-zinc-400 uppercase tracking-wider">Priority Score</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-700">
+                           @if (clients.Count > 0)
+                            {
+                                foreach (Client client in clients)
+                                {
+                                    <tr class="transition-colors hover:bg-zinc-700/50 @(newClientIds.Contains(client.Id) ? "animate-slide-in-fade" : "")">
+                                        <td class="p-4 font-bold text-blue-400">#@client.Id</td>
+                                        <td class="p-4 font-mono text-zinc-400">
+                                            @if (client.Files.Count > 0) { <span>[@string.Join(", ", client.Files)]</span> } else { <span>—</span> }
+                                        </td>
+                                        <td class="p-4 text-zinc-200">@client.TimeWaiting.TotalSeconds.ToString("F2")</td>
+                                        <td class="p-4">
+                                            @{
+                                                double score = client.PriorityScore;
+                                                (string bgColor, string textColor) = score > 75 ? ("bg-red-500/20", "text-red-400")
+                                                                            : score > 40 ? ("bg-yellow-500/20", "text-yellow-400")
+                                                                            : ("bg-green-500/20", "text-green-400");
+                                            }
+                                            <span class="inline-block px-2.5 py-0.5 rounded-full font-semibold @bgColor @textColor">
+                                                @score.ToString("F2")
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center p-16">
+                                        <div class="flex flex-col items-center gap-4 text-zinc-500">
+                                            <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
+                                            <p class="font-medium">No clients in queue</p>
+                                            <p class="text-xs">Start the simulation to see clients appear.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-4">
+            <button class="flex-1 py-3 px-6 rounded-lg text-xs font-bold uppercase tracking-wider shadow-lg transition-all duration-200 flex items-center justify-center gap-2 bg-blue-600 text-white hover:not(:disabled):bg-blue-500 hover:not(:disabled):-translate-y-0.5 hover:not(:disabled):shadow-blue-500/30 hover:not(:disabled):shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed" @onclick="StartSimulation" disabled="@isSimulationRunning">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                Start Simulation
+            </button>
+            <button class="flex-1 py-3 px-6 rounded-lg text-xs font-bold uppercase tracking-wider shadow-lg transition-all duration-200 flex items-center justify-center gap-2 bg-red-600 text-white hover:not(:disabled):bg-red-500 hover:not(:disabled):-translate-y-0.5 hover:not(:disabled):shadow-red-500/30 hover:not(:disabled):shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed" @onclick="StopSimulation" disabled="@(!isSimulationRunning)">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"></path></svg>
+                Stop Simulation
+            </button>
+        </div>
+
+@implements IDisposable
+
+@code {
+    private List<Client> clients = [];
+    private List<UploadQueue> uploadQueues = [];
+
+    private bool isSimulationRunning;
+    private HashSet<long> knownClientIds = [];
+    private readonly HashSet<long> newClientIds = [];
+
+    private bool isFormulaExpanded;
+
+    protected override Task OnInitializedAsync()
+    {
+        UploadServer.GetClientQueue().Subscribe(queue =>
+        {
+            newClientIds.Clear();
+            var currentIds = new HashSet<long>();
+            foreach (Client client in queue)
+            {
+                currentIds.Add(client.Id);
+                if (!knownClientIds.Contains(client.Id))
+                {
+                    newClientIds.Add(client.Id);
+                }
+            }
+            knownClientIds = currentIds;
+            clients = queue;
+            InvokeAsync(StateHasChanged);
+        });
+
+        UploadServer.GetUploadQueues().Subscribe(queues =>
+        {
+            uploadQueues = queues;
+            InvokeAsync(StateHasChanged);
+        });
+
+        return Task.CompletedTask;
+    }
+
+    private async Task StartSimulation()
+    {
+        isSimulationRunning = true;
+        await Simulation.Start();
+    }
+
+    private async Task StopSimulation()
+    {
+        await Simulation.Stop();
+        isSimulationRunning = false;
+        knownClientIds.Clear();
+        newClientIds.Clear();
+    }
+
+    private void ToggleFormula()
+    {
+        isFormulaExpanded = !isFormulaExpanded;
+    }
+
+    public void Dispose()
+    {
+        Simulation?.Dispose();
+        UploadServer?.Dispose();
+    }
+}

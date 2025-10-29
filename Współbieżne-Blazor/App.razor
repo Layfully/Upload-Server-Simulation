@@ -1,0 +1,29 @@
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Page Not Found</PageTitle>
+        <div class="bg-zinc-900 text-zinc-100 font-sans antialiased min-h-screen flex flex-col items-center justify-center text-center p-4">
+            <main>
+                <h1 class="text-9xl font-extrabold tracking-tight bg-gradient-to-br from-blue-500 to-green-500 bg-clip-text text-transparent">
+                    404
+                </h1>
+                <h2 class="mt-4 text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl">
+                    Page Not Found
+                </h2>
+                <p class="mt-4 text-base text-zinc-400">
+                    Sorry, we couldn’t find the page you’re looking for.
+                </p>
+                <div class="mt-10">
+                    <a href="/" class="flex-1 py-3 px-6 rounded-lg text-xs font-bold uppercase tracking-wider shadow-lg transition-all duration-200 flex items-center justify-center gap-2 bg-blue-600 text-white hover:not(:disabled):bg-blue-500 hover:not(:disabled):-translate-y-0.5 hover:not(:disabled):shadow-blue-500/30 hover:not(:disabled):shadow-2xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        Go back home
+                    </a>
+                </div>
+            </main>
+        </div>
+
+    </NotFound>
+</Router>
