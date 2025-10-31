@@ -30,18 +30,11 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore "./Współbieżne-Blazor/Współbieżne-Blazor.csproj"
+        run: dotnet restore "./Współbieżne-Blazor/WspółbieżneBlazor/WspółbieżneBlazor.csproj"
 
       - name: Build & Publish Blazor (Release)
         run: |
-          dotnet publish "./Współbieżne-Blazor/Współbieżne-Blazor.csproj" -c Release -o ./Współbieżne-Blazor/publish
-
-      - name: Inspect publish folder
-        run: |
-          echo "Publish contents:"
-          ls -la ./Współbieżne-Blazor/publish
-          echo "Publish/wwwroot contents (if present):"
-          ls -la ./Współbieżne-Blazor/publish/wwwroot || true
+          dotnet publish "./Współbieżne-Blazor/WspółbieżneBlazor/WspółbieżneBlazor.csproj" -c Release -o ./Współbieżne-Blazor/WspółbieżneBlazor/publish
 
       - name: Deploy to Azure Static Web Apps (upload)
         uses: Azure/static-web-apps-deploy@v1
@@ -49,9 +42,9 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WONDERFUL_BEACH_035DF9803 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "./Współbieżne-Blazor"                       # źródłowa lokalizacja projektu (nieużywana przy upload ale warto zachować)
-          api_location: "Api"                                       # jeśli nie masz API zmień na ""
-          app_artifact_location: "./Współbieżne-Blazor/publish/wwwroot"  # <-- folder z plikami statycznymi do deploy (ważne!)
+          app_location: "./Współbieżne-Blazor/WspółbieżneBlazor"
+          api_location: "" # jeśli nie masz API
+          app_artifact_location: "./Współbieżne-Blazor/WspółbieżneBlazor/publish/wwwroot"
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
@@ -62,3 +55,4 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+
