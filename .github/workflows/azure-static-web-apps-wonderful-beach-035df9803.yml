@@ -6,11 +6,11 @@ permissions:
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - main
+      - master
 
 jobs:
   build_and_deploy_job:
@@ -53,3 +53,4 @@ jobs:
     steps:
       - name: Placeholder for PR Cleanup Logic
         run: echo "PR closed. Azure SWA might automatically handle environment cleanup."
+
