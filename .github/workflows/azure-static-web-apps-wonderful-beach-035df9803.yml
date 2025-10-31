@@ -8,7 +8,6 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - master
-
 jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
@@ -44,6 +43,10 @@ jobs:
           output_location: "publish/wwwroot" # The location of the built app
           app_build_command: "dotnet publish -c Release -o publish"
           github_id_token: ${{ steps.idtoken.outputs.result }}
+        env:
+          # This forces Oryx to TRY to use the .NET 9 SDK build environment
+          # This may fail if the preview SDK is not available on the build agent
+          DOTNET_VERSION: '9.0'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -55,6 +58,7 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+
 
 
 
