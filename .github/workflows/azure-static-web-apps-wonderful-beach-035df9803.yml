@@ -43,6 +43,7 @@ jobs:
           api_location: "" # Location of your API code (if any)
           output_location: "publish/wwwroot" # The location of the built app
           app_build_command: "dotnet publish -c Release -o publish"
+          github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -54,5 +55,6 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+
 
 
