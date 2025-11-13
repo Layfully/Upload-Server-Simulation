@@ -43,7 +43,7 @@ jobs:
           app_build_command: "dotnet publish -c Release -o publish"
           github_id_token: ${{ steps.idtoken.outputs.result }}
         env:
-          DOTNET_VERSION: '9.0'
+          DOTNET_VERSION: '10.0'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -55,6 +55,7 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+
 
 
 
