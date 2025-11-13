@@ -1,65 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Upload Server Simulation | Real-Time Priority Queue Model</title>
+        <meta name="description" content="An interactive simulation of a concurrent file upload server, demonstrating a real-time priority scoring model for client requests." />
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💾</text></svg>">
+        <link rel="preload" id="webassembly" />
+        <link href="manifest.json" rel="manifest" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="css/app.output.css" rel="stylesheet" />
+        <script type="importmap"></script>
 
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Upload Server Simulation | Real-Time Priority Queue Model</title>
-    <meta name="description" content="An interactive simulation of a concurrent file upload server, demonstrating a real-time priority scoring model for client requests." />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💾</text></svg>">
-    <link href="manifest.json" rel="manifest" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="css/app.output.css" rel="stylesheet" />
+        <style>
+            body {
+                background-color: #181b1f;
+            }
 
-    <style>
-        body {
-            background-color: #181b1f;
-        }
+            .loader-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                color: #a1a1aa;
+                font-family: 'Inter', sans-serif;
+            }
 
-        .loader-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            color: #a1a1aa;
-            font-family: 'Inter', sans-serif;
-        }
+            .spinner {
+                width: 48px;
+                height: 48px;
+                border: 5px solid #3f3f46;
+                border-bottom-color: #3b82f6;
+                border-radius: 50%;
+                display: inline-block;
+                box-sizing: border-box;
+                animation: rotation 1s linear infinite;
+                margin-bottom: 1rem;
+            }
 
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #3f3f46;
-            border-bottom-color: #3b82f6;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-            margin-bottom: 1rem;
-        }
+            @keyframes rotation {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    </head>
 
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-</head>
+    <body>
+        <div id="app">
+            <div class="loader-container">
+                <div class="spinner"></div>
+                Loading Simulation...
+            </div>
+        </div>
 
-<body>
-<div id="app">
-    <div class="loader-container">
-        <div class="spinner"></div>
-        Loading Simulation...
-    </div>
-</div>
+        <div id="blazor-error-ui">
+            An unhandled error has occurred.
+            <a href="" class="reload">Reload</a>
+            <a class="dismiss">🗙</a>
+        </div>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
-
-<script src="_framework/blazor.webassembly.js"></script>
-<script>navigator.serviceWorker.register('service-worker.js');</script>
-</body>
+        <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+        <script>navigator.serviceWorker.register('service-worker.js');</script>
+    </body>
 </html>
